@@ -5,6 +5,37 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $("#btn_insert").click(function(){
+                    var input_user = $("#input_user").val();
+                    var input_email = $("#input_email").val();
+                    if(input_user == "" || input_email== ""){
+                        alert("User or Email is empty");
+                    }else{
+                        $('#myTable').append('<tr><td>'+input_user+'</td><td>'+input_email+'</td><td>'+0+'</td>');
+                        alert("Insert success");
+                    }
+
+                         
+                        // $user = $_POST["user"];
+                        // $email = $_POST["email1"];
+                        // if($user == "" && $email == ""){
+                        //     alert("User and email are empty");
+                        // }else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        //         alert("Invalid email format"); 
+                        // }else{
+                        //     $sql = "INSERT INTO user (user, gmail, action1)
+                        //     VALUES ('$user', '$email', 0)";
+                        //     if ($conn->query($sql) === TRUE) {
+                        //     }else{
+                        //         echo "Error: " . $sql . "<br>" . $conn->error;
+                        //     }
+                        // }
+                         
+                });
+            });
+        </script>
 	</head>
 	<body>
         <div class ="container">
@@ -25,52 +56,22 @@
             <div>
                 <br>
                 <form method="post" action = "insert.php">
-                    <div class = "row">
-                        <div class="col-sm-4">
-                            <label>User :</label>
-                            <input type = "text" name = "user" style="margin-left:9px">
-                            <span class="error"> 
-                                <?php 
-                                    if (empty($_POST["user"])) {
-                                        $userErr = "User is required";
-                                        echo $userErr;
-                                    } else {
-                                        $user = $_POST["user"];
-                                    }
-                                ?>
-                            </span>
-                            <br><br>
-                            <label>Email :</label>
-                            <input type = "text" name = "email1">
-                            <span class="error"> 
-                                <?php 
-                                    if (empty($_POST["email1"])) {
-                                        $emailErr = "Email is required";
-                                        echo $emailErr;
-                                    } else {
-                                        $email = $_POST["email1"];
-                                        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                                            $emailErr = "Invalid email format"; 
-                                        }else{
-                                            $sql = "INSERT INTO user (user, gmail, action1)
-                                            VALUES ('$user', '$email', '0')";
-                
-                                            if ($conn->query($sql) === TRUE) {
-                                                header("Refresh:0");
-                                            } else {
-                                                echo "Error: " . $sql . "<br>" . $conn->error;
-                                            }
-                                        }
-                                    }
-                                ?>
-                            </span>
+                    <div>
+                        <div>
+                            <div class="form-group">
+                                <label for="user">User:</label>
+                                <input type="text" name = "user" class = "form-control" id="input_user">
+                            </div> 
+                            <div class="form-group">
+                                <label for="pwd">Email:</label>
+                                <input type="text" name = "email1" class="form-control" id="input_email">
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            <input type= "submit" name="submit" value="Submit">
-                            <br><br>
+                        <div>
+                            <button type="button" id ="btn_insert" class="btn btn-success" value ="click">Insert</button>
+                        <br><br>
                         </div>
                     </div>
-                
                 </form>
             </div>
             <?php
@@ -80,7 +81,7 @@
                     // print_r($result->fetch_assoc());
                     // echo "</pre>";
             ?>
-                <table class="table table-bordered">
+                <table class="table table-bordered" id ="myTable">
                     <thead>
                         <tr>
                             <th style=width:150px> Name </th>
@@ -97,12 +98,7 @@
                         <tr>
                             <td style=width:150px> <?php echo $row["user"]; ?> </td>
                             <td style=width:150px> <?php echo $row["gmail"]; ?> </td>
-                            <td style=width:150px> 
-                                <?php echo $row["user"]; ?> 
-                                <a class="close">&times;
-                                    
-                                </a>
-                            </td>
+                            <td style=width:150px> <?php echo $row["action1"]; ?> </td>
                         </tr>
                     </tbody>
                     <?php       
@@ -110,9 +106,7 @@
                         }
                     ?>
                 </table>
-                <br><br>
             <?php $conn->close(); ?>
-        
         </div>
 	</body>
 </html>
