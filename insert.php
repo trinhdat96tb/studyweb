@@ -1,40 +1,63 @@
 <html> 
 	<head>
-		<style></style>
         <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script>
-            $(document).ready(function(){
-                $("#btn_insert").click(function(){
+        <script type="text/javascript">
+            $(function(){
+                // insert database
+                $("#btn_insert").on('click', function(){ 
                     var input_user = $("#input_user").val();
                     var input_email = $("#input_email").val();
-                    if(input_user == "" || input_email== ""){
-                        alert("User or Email is empty");
-                    }else{
-                        $('#myTable').append('<tr><td>'+input_user+'</td><td>'+input_email+'</td><td>'+0+'</td>');
-                        alert("Insert success");
-                    }
-
-                         
-                        // $user = $_POST["user"];
-                        // $email = $_POST["email1"];
-                        // if($user == "" && $email == ""){
-                        //     alert("User and email are empty");
-                        // }else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        //         alert("Invalid email format"); 
-                        // }else{
-                        //     $sql = "INSERT INTO user (user, gmail, action1)
-                        //     VALUES ('$user', '$email', 0)";
-                        //     if ($conn->query($sql) === TRUE) {
-                        //     }else{
-                        //         echo "Error: " . $sql . "<br>" . $conn->error;
-                        //     }
-                        // }
-                         
+                    
+                    $.ajax({ 
+                        method: "POST",
+                        url: "insert_data.php",
+                        data: {"user": input_user, "email": input_email, "action1":''},
+                    }).done(function( data ) { 
+                        var result = $.parseJSON(data);
+                        var str = '';
+                        if(result == 1) {
+                            $('#myTable').append('<tr><td>'+input_user+'</td><td>'+input_email+'</td><td><table><tr>'
+                                            +'<td style=width:100px><button type="button" class="btn btn-primary"><i class="fa fa-edit"></i></button></td>'
+                                            +'<td style=width:100px><button type="button" class="btn btn-danger"><i class="fa fa-close"></i></button</td>'
+                                            +'</tr></table></td></tr>');
+                            alert("User record insert successfully.");
+                        }else if( result == 2) {
+                            alert("All fields are required.");
+                        } else{
+                            alert("User data could not be saved. Please try again.");
+                            document.getElementById("input_email").value = "";
+                        }
+                    });
                 });
-            });
+
+                // delete database 
+                $("#btn_delete").on('click', function(str){ 
+                    var id = str;
+                    $.ajax({
+                        type: "GET",
+                        url: 'delete.php',
+                        data: "id="+id,
+                    }).done(function(data){
+                        item.remove();
+                        alert("Item Deleted Successfully");
+                    });
+                });
+                
+                // edit database
+                $("#btn_edit").on('click', function(){
+                    var id =$(this).data('id');
+                    var user =$('#'+id).children('td[data_target=user]').text();
+                    var gmail =$('#'+id).children('td[data_target=gmail]').text();
+
+                    $('#modal_user').val(user);
+                    $('#modal_gmail').val(gmail);
+                    $('#modal_update').modal('toggle');
+                });
+            });        
         </script>
 	</head>
 	<body>
@@ -44,10 +67,8 @@
                 $username = "root";
                 $password = "";
                 $dbName = "user";
-
                 // Create connection
                 $conn = mysqli_connect($servername, $username, $password,$dbName);
-
                 // Check connection
                 if ($conn->connect_error) {
                     die("Connection failed: " . $conn->connect_error);
@@ -60,22 +81,21 @@
                         <div>
                             <div class="form-group">
                                 <label for="user">User:</label>
-                                <input type="text" name = "user" class = "form-control" id="input_user">
+                                <input type="text" name = "user" class = "form-control" id="input_user" placeholder="Input user" required >
                             </div> 
                             <div class="form-group">
-                                <label for="pwd">Email:</label>
-                                <input type="text" name = "email1" class="form-control" id="input_email">
+                                <label for="email">Email:</label>
+                                <input type="text" name = "email1" class="form-control" id="input_email" placeholder="Input email" required >
                             </div>
                         </div>
                         <div>
                             <button type="button" id ="btn_insert" class="btn btn-success" value ="click">Insert</button>
-                        <br><br>
                         </div>
                     </div>
                 </form>
             </div>
             <?php
-                $sql2 = "SELECT user, gmail, action1 FROM user";
+                $sql2 = "SELECT id, user, gmail, action1 FROM user";
                 $result = $conn->query($sql2);
                     // echo "<pre>";
                     // print_r($result->fetch_assoc());
@@ -84,9 +104,9 @@
                 <table class="table table-bordered" id ="myTable">
                     <thead>
                         <tr>
-                            <th style=width:150px> Name </th>
-                            <th style=width:150px> Email </th>
-                            <th style=width:150px> Action </th>
+                            <th> Name </th>
+                            <th> Email </th>
+                            <th> Action </th>
                         </tr>
                     </thead>
                     <?php
@@ -95,10 +115,46 @@
                                 //echo "<br> : ". $row["user"]. " - Email: ". $row["gmail"]. " " . $row["action1"] . "<br>";
                     ?>
                     <tbody>
-                        <tr>
-                            <td style=width:150px> <?php echo $row["user"]; ?> </td>
-                            <td style=width:150px> <?php echo $row["gmail"]; ?> </td>
-                            <td style=width:150px> <?php echo $row["action1"]; ?> </td>
+                        <tr id="<?php echo $row['id']?>">
+                            <td style=width:33% data_target="user"> <?php echo $row["user"]; ?> </td>
+                            <td style=width:33% data_target="gmail"> <?php echo $row["gmail"]; ?> </td>
+                            <td style=width:33%>
+                                <table>
+                                    <tr>
+                                        <td style=width:100px>
+                                            <a data_id="<?php echo $row['id'] ?>" data_role="update" type="button" id ="btn_edit" class="btn btn-primary" value ="click" data-toggle="modal" data-target="#modal_update"><i class="fa fa-edit"></i></a>
+                                            <!--Modal-->
+                                            <div class = "modal fade" id = "modal_update" role = "dialog">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title">Update database</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-group">
+                                                                <label for="user">User:</label>
+                                                                <input type="text" name = "user" class = "form-control" id="modal_user" placeholder="Input user" >
+                                                            </div> 
+                                                            <div class="form-group">
+                                                                <label for="email">Email:</label>
+                                                                <input type="text" name = "email1" class="form-control" id="modal_email" placeholder="Input email" >
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                            <a id="update" type="button" class="btn btn-primary" data-dismiss="modal">Submit</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style=width:100px>
+                                            <button type="button" id ="btn_delete" class="btn btn-danger" value ="click"><i class="fa fa-close"></i></button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                     </tbody>
                     <?php       
@@ -107,6 +163,7 @@
                     ?>
                 </table>
             <?php $conn->close(); ?>
+
         </div>
 	</body>
 </html>
