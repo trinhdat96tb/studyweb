@@ -16,8 +16,8 @@
 
     /* Get data from Client side using $_POST array */
 
-    $user  = $_POST['user'];
-    $email  = $_POST['email'];
+    $user = $_POST['user'];
+    $email = $_POST['email'];
 
     /* validate whether user has entered all values. */
 

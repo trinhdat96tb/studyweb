@@ -33,31 +33,61 @@
                         }
                     });
                 });
+            }); 
 
-                // delete database 
-                $("#btn_delete").on('click', function(str){ 
-                    var id = str;
-                    $.ajax({
-                        type: "GET",
-                        url: 'delete.php',
-                        data: "id="+id,
-                    }).done(function(data){
-                        item.remove();
-                        alert("Item Deleted Successfully");
-                    });
+            // delete database
+
+            $(document).ready(function(){
+                $(document).on('click', 'a[data_role=delete]', function(){
+                    if(confirm("Do you want to delete?")==true){
+                        var id = $(this).data('id');
+                        $.ajax({
+                            method : 'POST',
+                            url : 'delete.php',
+                            data: {"id": id}
+                        }).done(function(data){
+                            var result = $.parseJSON(data);
+                            if(result == 1){
+                                alert("delete success");
+                            }
+                            window.location.replace("insert.php");
+                        });
+                        
+                    }   
                 });
+            });
                 
-                // edit database
-                $("#btn_edit").on('click', function(){
-                    var id =$(this).data('id');
-                    var user =$('#'+id).children('td[data_target=user]').text();
-                    var gmail =$('#'+id).children('td[data_target=gmail]').text();
-
+            // edit database
+            $(document).ready(function(){
+                $(document).on('click', 'a[data_role=update]', function(){
+                    var id = $(this).data('id');
+                    var user = $('#'+id).children('td[data-target=user]').text();
+                    var email = $('#'+id).children('td[data-target=gmail]').text();
                     $('#modal_user').val(user);
-                    $('#modal_gmail').val(gmail);
+                    $('#modal_email').val(email);
+                    $('#userId').val(id);
                     $('#modal_update').modal('toggle');
                 });
-            });        
+                $('#update').click(function(){
+                    var id = $('#userId').val();
+                    var user = $('#modal_user').val();
+                    var email = $('#modal_email').val();
+                    $.ajax({
+                        method : 'POST',
+                        url : 'update.php',
+                        data: {"id": id, "user": user, "email": email},
+                    }).done(function( data ) { 
+                        var result = $.parseJSON(data);
+                        if(result == 1){
+                            $('#'+id).children('td[data-target=user]').text(user);
+                            $('#'+id).children('td[data-target=gmail]').text(email);
+                            alert("update success");
+                        }
+                    });
+
+                })
+            });
+                       
         </script>
 	</head>
 	<body>
@@ -116,13 +146,13 @@
                     ?>
                     <tbody>
                         <tr id="<?php echo $row['id']?>">
-                            <td style=width:33% data_target="user"> <?php echo $row["user"]; ?> </td>
-                            <td style=width:33% data_target="gmail"> <?php echo $row["gmail"]; ?> </td>
+                            <td style=width:33% data-target="user"> <?php echo $row["user"]; ?> </td>
+                            <td style=width:33% data-target="gmail"> <?php echo $row["gmail"]; ?> </td>
                             <td style=width:33%>
                                 <table>
                                     <tr>
                                         <td style=width:100px>
-                                            <a data_id="<?php echo $row['id'] ?>" data_role="update" type="button" id ="btn_edit" class="btn btn-primary" value ="click" data-toggle="modal" data-target="#modal_update"><i class="fa fa-edit"></i></a>
+                                            <a href="#" data-id="<?php echo $row['id'] ?>" data_role="update" type="button" class="btn btn-primary"><i class="fa fa-edit"></i></a>
                                             <!--Modal-->
                                             <div class = "modal fade" id = "modal_update" role = "dialog">
                                                 <div class="modal-dialog">
@@ -134,23 +164,24 @@
                                                         <div class="modal-body">
                                                             <div class="form-group">
                                                                 <label for="user">User:</label>
-                                                                <input type="text" name = "user" class = "form-control" id="modal_user" placeholder="Input user" >
+                                                                <input type="text" class = "form-control" id="modal_user">
                                                             </div> 
                                                             <div class="form-group">
                                                                 <label for="email">Email:</label>
-                                                                <input type="text" name = "email1" class="form-control" id="modal_email" placeholder="Input email" >
+                                                                <input type="text" class="form-control" id="modal_email">
                                                             </div>
+                                                                <input type="hidden" id="userId" class="form-control">
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                            <a id="update" type="button" class="btn btn-primary" data-dismiss="modal">Submit</a>
+                                                            <a href="#" id="update" type="button" class="btn btn-primary" data-dismiss="modal">Submit</a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td style=width:100px>
-                                            <button type="button" id ="btn_delete" class="btn btn-danger" value ="click"><i class="fa fa-close"></i></button>
+                                            <a href="#" data-id="<?php echo $row['id'] ?>" type="button" class="btn btn-danger" data_role="delete"><i class="fa fa-close"></i></a>
                                         </td>
                                     </tr>
                                 </table>
