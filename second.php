@@ -1,5 +1,0 @@
-<?php 
-
-    // second demo git
-
-?>
