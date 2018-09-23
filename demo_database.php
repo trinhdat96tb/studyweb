@@ -1,3 +1,12 @@
+<?php 
+    include('controller/c_data.php');
+    $c_data = new C_data();
+    $user = $c_data->index();
+    print_r($user);
+
+
+?>
+
 <html> 
 	<head>
         <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
@@ -8,7 +17,6 @@
         <script type="text/javascript">
             $(function(){
                 // insert database
-                // có những cái chúng ta nên thử
                 $("#btn_insert").on('click', function(){ 
                     var input_user = $("#input_user").val();
                     var input_email = $("#input_email").val();
@@ -94,16 +102,16 @@
 	<body>
         <div class ="container">
             <?php
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbName = "user";
-                // Create connection
-                $conn = mysqli_connect($servername, $username, $password,$dbName);
-                // Check connection
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+                // $servername = "localhost";
+                // $username = "root";
+                // $password = "";
+                // $dbName = "user";
+                // // Create connection
+                // $conn = mysqli_connect($servername, $username, $password,$dbName);
+                // // Check connection
+                // if ($conn->connect_error) {
+                //     die("Connection failed: " . $conn->connect_error);
+                // }
             ?>
             <div>
                 <br>
@@ -128,9 +136,6 @@
             <?php
                 $sql2 = "SELECT id, user, gmail, action1 FROM user";
                 $result = $conn->query($sql2);
-                    // echo "<pre>";
-                    // print_r($result->fetch_assoc());
-                    // echo "</pre>";
             ?>
                 <table class="table table-bordered" id ="myTable">
                     <thead>
@@ -140,11 +145,6 @@
                             <th> Action </th>
                         </tr>
                     </thead>
-                    <?php
-                        if ($result->num_rows > 0){
-                            while($row = $result->fetch_assoc()){
-                                //echo "<br> : ". $row["user"]. " - Email: ". $row["gmail"]. " " . $row["action1"] . "<br>";
-                    ?>
                     <tbody>
                         <tr id="<?php echo $row['id']?>">
                             <td style=width:33% data-target="user"> <?php echo $row["user"]; ?> </td>
@@ -189,10 +189,6 @@
                             </td>
                         </tr>
                     </tbody>
-                    <?php       
-                            }
-                        }
-                    ?>
                 </table>
             <?php $conn->close(); ?>
 
