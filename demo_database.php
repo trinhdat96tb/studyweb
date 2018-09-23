@@ -8,6 +8,7 @@
         <script type="text/javascript">
             $(function(){
                 // insert database
+                // có những cái chúng ta nên thử
                 $("#btn_insert").on('click', function(){ 
                     var input_user = $("#input_user").val();
                     var input_email = $("#input_email").val();
