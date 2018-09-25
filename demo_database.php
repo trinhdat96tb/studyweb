@@ -70,7 +70,9 @@
                 $(document).on('click', 'a[data_role=update]', function(){
                     var id = $(this).data('id');
                     var user = $('#'+id).children('td[data-target=user]').text();
+                    // alert(user);
                     var email = $('#'+id).children('td[data-target=gmail]').text();
+                    // alert(email);
                     $('#modal_user').val(user);
                     $('#modal_email').val(email);
                     $('#userId').val(id);
@@ -92,7 +94,7 @@
                             alert("update success");
                         }
                     });
-
+                    
                 })
             });
                        
