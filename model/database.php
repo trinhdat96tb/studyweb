@@ -27,7 +27,7 @@
         public $_cursor = NULL;        
         
         public function database() {
-            $this->_dbh = new PDO('mysql:host=localhost; dbname=','root','');
+            $this->_dbh = new PDO("mysql:host=localhost; dbname=user","root","");
             $this->_dbh->query('set names "utf8"');
         }
         

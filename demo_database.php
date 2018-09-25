@@ -1,9 +1,9 @@
 <?php 
     include('controller/c_data.php');
     $c_data = new C_data();
-    $user = $c_data->index();
-    print_r($user);
-
+    $tk = $c_data->index();
+    $user= $tk['user'];
+    // print_r($user);
 
 ?>
 
@@ -61,7 +61,6 @@
                             }
                             window.location.replace("insert.php");
                         });
-                        
                     }   
                 });
             });
@@ -101,18 +100,6 @@
 	</head>
 	<body>
         <div class ="container">
-            <?php
-                // $servername = "localhost";
-                // $username = "root";
-                // $password = "";
-                // $dbName = "user";
-                // // Create connection
-                // $conn = mysqli_connect($servername, $username, $password,$dbName);
-                // // Check connection
-                // if ($conn->connect_error) {
-                //     die("Connection failed: " . $conn->connect_error);
-                // }
-            ?>
             <div>
                 <br>
                 <form method="post" action = "insert.php">
@@ -133,11 +120,7 @@
                     </div>
                 </form>
             </div>
-            <?php
-                $sql2 = "SELECT id, user, gmail, action1 FROM user";
-                $result = $conn->query($sql2);
-            ?>
-                <table class="table table-bordered" id ="myTable">
+            <table class="table table-bordered" id ="myTable">
                     <thead>
                         <tr>
                             <th> Name </th>
@@ -146,52 +129,56 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr id="<?php echo $row['id']?>">
-                            <td style=width:33% data-target="user"> <?php echo $row["user"]; ?> </td>
-                            <td style=width:33% data-target="gmail"> <?php echo $row["gmail"]; ?> </td>
-                            <td style=width:33%>
-                                <table>
-                                    <tr>
-                                        <td style=width:100px>
-                                            <a href="#" data-id="<?php echo $row['id'] ?>" data_role="update" type="button" class="btn btn-primary"><i class="fa fa-edit"></i></a>
-                                            <!--Modal-->
-                                            <div class = "modal fade" id = "modal_update" role = "dialog">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            <h4 class="modal-title">Update database</h4>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="form-group">
-                                                                <label for="user">User:</label>
-                                                                <input type="text" class = "form-control" id="modal_user">
-                                                            </div> 
-                                                            <div class="form-group">
-                                                                <label for="email">Email:</label>
-                                                                <input type="text" class="form-control" id="modal_email">
+                    <?php
+                        for($i=0; $i<count($user);$i++){
+                        ?>
+                            <tr>
+                                <td style=width:33% data-target="user"><?php echo $user[$i]->user ?></td>
+                                <td style=width:33% data-target="gmail"><?php echo $user[$i]->gmail ?></td>
+                                <td style=width:33%>
+                                    <table>
+                                        <tr>
+                                            <td style=width:100px>
+                                                <a href="#" data-id="<?php echo $user[$i]->id ?>" data_role="update" type="button" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                                <!--Modal-->
+                                                <div class = "modal fade" id = "modal_update" role = "dialog">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                <h4 class="modal-title">Update database</h4>
                                                             </div>
-                                                                <input type="hidden" id="userId" class="form-control">
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                            <a href="#" id="update" type="button" class="btn btn-primary" data-dismiss="modal">Submit</a>
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label for="user">User:</label>
+                                                                    <input type="text" class = "form-control" id="modal_user">
+                                                                </div> 
+                                                                <div class="form-group">
+                                                                    <label for="email">Email:</label>
+                                                                    <input type="text" class="form-control" id="modal_email">
+                                                                </div>
+                                                                    <input type="hidden" id="userId" class="form-control">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                <a href="#" id="update" type="button" class="btn btn-primary" data-dismiss="modal">Submit</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td style=width:100px>
-                                            <a href="#" data-id="<?php echo $row['id'] ?>" type="button" class="btn btn-danger" data_role="delete"><i class="fa fa-close"></i></a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
+                                            </td>
+                                            <td style=width:100px>
+                                                <a href="#" data-id="<?php echo $user[$i]->id ?>" type="button" class="btn btn-danger" data_role="delete"><i class="fa fa-close"></i></a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        <?php
+                        }
+                    ?>
                     </tbody>
                 </table>
-            <?php $conn->close(); ?>
-
         </div>
 	</body>
 </html>
