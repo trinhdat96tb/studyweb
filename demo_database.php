@@ -1,10 +1,11 @@
 <?php 
-    include('controller/c_data.php');
+    require_once('controller/c_data.php');
     $c_data = new C_data();
-    $tk = $c_data->index();
-    $user= $tk['user'];
-    // print_r($user);
-
+    $users = $c_data->index();
+    $insert = $c_data->insertUser();
+    $delete = $c_data->deleteUser();
+    $update = $c_data->updateUser();
+    
 ?>
 
 <html> 
@@ -23,7 +24,7 @@
                     
                     $.ajax({ 
                         method: "POST",
-                        url: "insert_data.php",
+                        url: "<?php echo $insert ?>",
                         data: {"user": input_user, "email": input_email, "action1":''},
                     }).done(function( data ) { 
                         var result = $.parseJSON(data);
@@ -52,7 +53,7 @@
                         var id = $(this).data('id');
                         $.ajax({
                             method : 'POST',
-                            url : 'delete.php',
+                            url : '<?php echo $delete ?>',
                             data: {"id": id}
                         }).done(function(data){
                             var result = $.parseJSON(data);
@@ -82,17 +83,22 @@
                     var email = $('#modal_email').val();
                     $.ajax({
                         method : 'POST',
-                        url : 'update.php',
+                        url : '<?php echo $update ?>',
                         data: {"id": id, "user": user, "email": email},
                     }).done(function( data ) { 
                         var result = $.parseJSON(data);
-                        if(result == 1){
+                        if(result == 1) {
                             $('#'+id).children('td[data-target=user]').text(user);
                             $('#'+id).children('td[data-target=gmail]').text(email);
                             alert("update success");
+                        }else if( result == 2) {
+                            alert("All fields are required.");
+                        } else{
+                            alert("User data could not be saved. Please try again.");
+                            document.getElementById("input_email").value = "";
                         }
                     });
-
+                    
                 })
             });
                        
@@ -130,16 +136,16 @@
                     </thead>
                     <tbody>
                     <?php
-                        for($i=0; $i<count($user);$i++){
+                        foreach($users as $user){
                         ?>
                             <tr>
-                                <td style=width:33% data-target="user"><?php echo $user[$i]->user ?></td>
-                                <td style=width:33% data-target="gmail"><?php echo $user[$i]->gmail ?></td>
+                                <td style=width:33% data-target="user"><?php echo $user['user'] ?></td>
+                                <td style=width:33% data-target="gmail"><?php echo $user['gmail'] ?></td>
                                 <td style=width:33%>
                                     <table>
                                         <tr>
                                             <td style=width:100px>
-                                                <a href="#" data-id="<?php echo $user[$i]->id ?>" data_role="update" type="button" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                                <a href="#" data-id="<?php echo $user['id'] ?>" data_role="update" type="button" class="btn btn-primary"><i class="fa fa-edit"></i></a>
                                                 <!--Modal-->
                                                 <div class = "modal fade" id = "modal_update" role = "dialog">
                                                     <div class="modal-dialog">
@@ -168,14 +174,14 @@
                                                 </div>
                                             </td>
                                             <td style=width:100px>
-                                                <a href="#" data-id="<?php echo $user[$i]->id ?>" type="button" class="btn btn-danger" data_role="delete"><i class="fa fa-close"></i></a>
+                                                <a href="#" data-id="<?php echo $user['id']?>" type="button" class="btn btn-danger" data_role="delete"><i class="fa fa-close"></i></a>
                                             </td>
                                         </tr>
                                     </table>
                                 </td>
                             </tr>
                         <?php
-                        }
+                        } 
                     ?>
                     </tbody>
                 </table>
