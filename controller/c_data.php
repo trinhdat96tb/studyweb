@@ -10,8 +10,14 @@
         }
 
         public function insertUser(){
+            $user = $_POST['user'];
+            $email = $_POST['email'];
+            $add = array(
+                'user' => $user,
+                'gmail' => $email,
+            );
             $m_data = new M_data();
-            $result = $m_data->insertUser();
+            $result = $m_data->insertUser($add);
             return $result;
         }
 

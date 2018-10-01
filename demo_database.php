@@ -2,9 +2,9 @@
     require_once('controller/c_data.php');
     $c_data = new C_data();
     $users = $c_data->index();
-    $insert = $c_data->insertUser();
-    $delete = $c_data->deleteUser();
-    $update = $c_data->updateUser();
+    // $url_insert = $c_data->insertUser();
+    // $url_delete = $c_data->deleteUser();
+    // $url_update = $c_data->updateUser();
     
 ?>
 
@@ -21,14 +21,12 @@
                 $("#btn_insert").on('click', function(){ 
                     var input_user = $("#input_user").val();
                     var input_email = $("#input_email").val();
-                    
                     $.ajax({ 
-                        method: "POST",
-                        url: "<?php echo $insert ?>",
+                        method: 'POST',
+                        url: '<?php $c_data->insertUser(); ?>',
                         data: {"user": input_user, "email": input_email, "action1":''},
                     }).done(function( data ) { 
                         var result = $.parseJSON(data);
-                        var str = '';
                         if(result == 1) {
                             $('#myTable').append('<tr><td>'+input_user+'</td><td>'+input_email+'</td><td><table><tr>'
                                             +'<td style=width:100px><button type="button" class="btn btn-primary"><i class="fa fa-edit"></i></button></td>'
@@ -53,7 +51,7 @@
                         var id = $(this).data('id');
                         $.ajax({
                             method : 'POST',
-                            url : '<?php echo $delete ?>',
+                            url : '<?php echo '$c_data->deleteUser()' ?>',
                             data: {"id": id}
                         }).done(function(data){
                             var result = $.parseJSON(data);
@@ -83,7 +81,7 @@
                     var email = $('#modal_email').val();
                     $.ajax({
                         method : 'POST',
-                        url : '<?php echo $update ?>',
+                        url : '<?php echo '$c_data->updateUser()' ?>',
                         data: {"id": id, "user": user, "email": email},
                     }).done(function( data ) { 
                         var result = $.parseJSON(data);
