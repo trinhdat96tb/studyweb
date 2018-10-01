@@ -15,10 +15,10 @@
             return $users;
         }
 
-        public function insertUser(){
+        public function insertUser($add){
             $conn = $this->connect();
-            $user = $_POST['user'];
-            $email = $_POST['email'];
+            $user = $add['user'];
+            $email = $add['gmail'];
             if(!$user || !$email){
                 $result = 2;
             }elseif (!strpos($email, "@") || !strpos($email, ".")) {
@@ -31,14 +31,14 @@
                         echo "Error: " . $sql . "<br>" . $conn->error;
                     }
             }
-            echo $result;
+            return $result;
         }
 
         public function deleteUser(){
             $conn = $this->connect();
             $id = $_POST['id'];
             mysqli_query($conn,"DELETE FROM user Where id = '$id'");
-            echo $result=1;
+            return $result=1;
         }
 
         public function updateUser(){
@@ -57,7 +57,7 @@
                         echo "Error: " . $sql . "<br>" . $conn->error;
                     }
             }
-            echo $result;
+            return $result;
         }
 
     }
